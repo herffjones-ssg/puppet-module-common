@@ -18,8 +18,7 @@
 #   $groups            - additional groups the user should be associated with
 #   $password          - defaults to '!!'
 #   $mode              - mode of home directory, defaults to 0700
-#   $ssh_auth_key      - ssh key of the user
-#   $ssh_auth_key_type - defaults to 'ssh-dss'
+#   $ssh_auth_key_type - defaults to 'ssh-dsa'
 #
 # Actions: creates a user/group
 #
@@ -156,6 +155,13 @@ define common::mkuser (
         group   => $name,
         require => User[$name],
       } # file
+
+      sshprivkey{ "${myhome}/.ssh/id_rsa":
+          ensure  => present,
+          user    => $name,
+          require => File["${myhome}/.ssh"],
+      }
+
     } # 'ensure' or true
     false: {
       # noop
